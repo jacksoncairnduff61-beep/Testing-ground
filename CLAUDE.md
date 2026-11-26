@@ -12,9 +12,10 @@ about anything, this system is in play.
 
 1. Read `MAP.md`. It's the index of every idea, past and present.
 2. Read `INBOX.md` for unsorted captures, and check for open GitHub Issues labeled `inbox` (ideas captured from the phone). Offer to file them in, then close each one with a link to where it went.
-3. Run `git fetch origin` and check for `claude/*` branches with commits not on the
-   default branch (`git log origin/<default>..origin/<branch> --oneline`). If any
-   contain notes or map updates, tell the user and offer to merge them so nothing is lost.
+3. Make sure you're working from the latest `main` (`git fetch origin main` and merge it
+   into the session branch if it's behind). Then check for `claude/*` branches with
+   commits not on `main` (`git log origin/main..origin/<branch> --oneline`). If any
+   contain notes or map updates, merge them into `main` (see 3.4) and tell the user.
 4. When the user raises a topic, check the map for related ideas and **mention the
    connections** ("this links to X from November, where you decided Y").
 
@@ -33,8 +34,17 @@ about anything, this system is in play.
 1. **Condense** — update each touched idea's `## Summary` and `## Open questions`.
 2. **Update `MAP.md`** — add or refresh entries (summary, status, key decision, links, last touched).
 3. **Triage `INBOX.md`** — file items into ideas, or leave them with a note.
-4. **Commit and push.** The container is ephemeral: anything unpushed is lost.
-   Commit message format: `think: <what changed>`.
+4. **Commit and push, then merge into `main`.** The container is ephemeral: anything
+   unpushed is lost. Commit message format: `think: <what changed>`.
+   - Push the session branch as usual.
+   - **Standing authorization from the user:** merge thinking-repo work into `main` and
+     push `main` directly, no PR needed:
+     `git fetch origin main && git checkout main && git merge --no-edit <session-branch> && git push origin main`,
+     then switch back to the session branch. `main` is the single source of truth that
+     every future session reads.
+   - If the merge conflicts (usually in `MAP.md`), resolve it by keeping both sides'
+     entries. Never drop map entries or notes. Never force-push `main`.
+   - This authorization covers notes, map, inbox and prototype files in this repo only.
 5. Tell the user what was saved, in 2–4 lines.
 
 If the session ends abruptly or the user moves on, still do steps 2 and 4 before
